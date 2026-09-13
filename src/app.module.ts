@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { Health } from './health.entity';
 import { ProjectsModule } from './projects/projects.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ProjectsModule } from './projects/projects.module';
     }),
     TypeOrmModule.forFeature([Health]),
     ProjectsModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
