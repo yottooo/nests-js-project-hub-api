@@ -1,6 +1,6 @@
 # Project Hub API
 
-NestJS + Fastify + TypeORM API backed by PostgreSQL. The database runs in Docker Compose; the app runs with Node on your machine.
+NestJS (Express) + TypeORM API backed by PostgreSQL, with real-time project chat over Socket.IO. The database runs in Docker Compose; the app runs with Node on your machine.
 
 ## Prerequisites
 
@@ -29,6 +29,7 @@ NestJS + Fastify + TypeORM API backed by PostgreSQL. The database runs in Docker
    ```
 
    These values are used by both Docker Compose and the app. Change them if you like.
+   Optionally set `PORT` to change the port the API listens on (default `3000`).
 
 3. Start PostgreSQL and pgAdmin
 
@@ -51,6 +52,42 @@ The API is now at http://localhost:3000.
 - http://localhost:5050 – pgAdmin (login with `PGADMIN_EMAIL` / `PGADMIN_PASSWORD` from `.env`)
 
 To connect pgAdmin to the database, add a server with host `db`, port `5432`, and the `DB_USERNAME` / `DB_PASSWORD` from `.env`.
+
+## HTTP endpoints
+
+| Method | Path            | Description                    |
+| ------ | --------------- | ------------------------------ |
+| GET    | `/`             | Hello endpoint                 |
+| GET    | `/db-test`      | Checks the database connection |
+| POST   | `/projects`     | Create a project               |
+| GET    | `/projects`     | List projects                  |
+| GET    | `/projects/:id` | Get a project by id            |
+
+## Real-time chat (Socket.IO)
+
+A Socket.IO server runs on the same port as the HTTP API. Each project has its own chat room.
+
+Client → server events:
+
+- `joinProject` with `{ projectId: number }` – joins the project's room. The server replies with `joinedProject` and `{ projectId }`.
+- `sendMessage` with `{ projectId: number, text: string }` – broadcasts the message to everyone in the project's room.
+
+Server → client events:
+
+- `newMessage` with `{ projectId, text, senderId, sentAt }`
+
+Example with `socket.io-client`:
+
+```js
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:3000');
+
+socket.on('newMessage', (msg) => console.log(msg));
+
+socket.emit('joinProject', { projectId: 1 });
+socket.emit('sendMessage', { projectId: 1, text: 'Hello!' });
+```
 
 ## Stop
 
