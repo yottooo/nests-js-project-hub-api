@@ -7,7 +7,7 @@ import { Health } from './health.entity';
 import { ProjectsModule } from './projects/projects.module';
 import { ChatModule } from './chat/chat.module';
 import { RedisModule } from './redis/redis.module';
-import { EventEmitterModule } from 'node_modules/@nestjs/event-emitter/dist/event-emitter.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
