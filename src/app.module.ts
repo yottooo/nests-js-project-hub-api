@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { Health } from './health.entity';
 import { ProjectsModule } from './projects/projects.module';
 import { ChatModule } from './chat/chat.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ChatModule } from './chat/chat.module';
     TypeOrmModule.forFeature([Health]),
     ProjectsModule,
     ChatModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],
