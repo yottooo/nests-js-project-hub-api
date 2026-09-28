@@ -19,8 +19,11 @@ export class ProjectsService {
     private readonly events: EventEmitter2,
   ) {}
 
-  create(createProjectDto: CreateProjectDto) {
-    return 'This action adds a new project';
+  async create(dto: CreateProjectDto): Promise<Project> {
+    const project = await this.repo.save(this.repo.create(dto));
+    await this.redis.del(this.ALL_KEY);
+    this.events.emit('project.created', project);
+    return project;
   }
 
   async findAll() {
@@ -52,14 +55,27 @@ export class ProjectsService {
     if (!project) {
       throw new NotFoundException(`Project with ID ${id} not found`);
     }
+    await this.redis.set(key, JSON.stringify(project), 'EX', this.TTL);
     return project;
   }
 
-  update(id: number, updateProjectDto: UpdateProjectDto) {
-    return `This action updates a #${id} project`;
+  async update(id: number, dto: UpdateProjectDto) {
+    const project = await this.repo.findOne({ where: { id } });
+    if (!project) {
+      throw new NotFoundException(`Project with ID ${id} not found`);
+    }
+    const updated = await this.repo.save({ ...project, ...dto });
+    await this.redis.set(`projects:${id}`, JSON.stringify(updated), 'EX', this.TTL);
+    return updated;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} project`;
+  async remove(id: number) {
+    const project = await this.repo.findOne({ where: { id } });
+    if (!project) {
+      throw new NotFoundException(`Project with ID ${id} not found`);
+    }
+    await this.repo.delete(id);
+    await this.redis.del(`projects:${id}`);
+    return project;
   }
 }
