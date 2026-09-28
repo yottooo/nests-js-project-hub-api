@@ -40,8 +40,19 @@ export class ProjectsService {
     return projects;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} project`;
+  async findOne(id: number) {
+    const key = `projects:${id}`;
+    const cached = await this.redis.get(key);
+
+    if (cached) {
+      return JSON.parse(cached) as Project;
+    }
+
+    const project = await this.repo.findOne({ where: { id } });
+    if (!project) {
+      throw new NotFoundException(`Project with ID ${id} not found`);
+    }
+    return project;
   }
 
   update(id: number, updateProjectDto: UpdateProjectDto) {
