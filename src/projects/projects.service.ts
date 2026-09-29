@@ -51,6 +51,10 @@ export class ProjectsService {
       return JSON.parse(cached) as Project;
     }
 
+    if (!Number.isInteger(id)) {
+      throw new NotFoundException(`Project with ID ${id} not found`);
+    }
+    
     const project = await this.repo.findOne({ where: { id } });
     if (!project) {
       throw new NotFoundException(`Project with ID ${id} not found`);

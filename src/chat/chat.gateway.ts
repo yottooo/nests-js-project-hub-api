@@ -25,6 +25,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() payload: { projectId: number },
   ) {
     const { projectId } = payload;
+    
+    try {
+      await this.projectsService.findOne(projectId);
+    } catch {
+      this.logger.warn(`Join rejected, project ${projectId} not found`);
+      return { event: 'error', data: { message: `Project ${projectId} not found` } };
+    }
+
     await client.join(this.roomName(projectId));
     this.logger.log(`Client joined project: ${projectId}`);
     return { event: 'joinedProject', data: { projectId } };
