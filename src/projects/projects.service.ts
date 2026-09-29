@@ -65,7 +65,14 @@ export class ProjectsService {
       throw new NotFoundException(`Project with ID ${id} not found`);
     }
     const updated = await this.repo.save({ ...project, ...dto });
-    await this.redis.set(`projects:${id}`, JSON.stringify(updated), 'EX', this.TTL);
+    await this.redis.set(
+      `projects:${id}`,
+      JSON.stringify(updated),
+      'EX',
+      this.TTL,
+    );
+    await this.redis.del(this.ALL_KEY);
+    this.events.emit('project.updated', updated);
     return updated;
   }
 
@@ -75,7 +82,8 @@ export class ProjectsService {
       throw new NotFoundException(`Project with ID ${id} not found`);
     }
     await this.repo.delete(id);
-    await this.redis.del(`projects:${id}`);
+    await this.redis.del(this.ALL_KEY, `projects:${id}`);
+    this.events.emit('project.removed', { id });
     return project;
   }
 }

@@ -9,6 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
+import { ProjectsService } from 'src/projects/projects.service';
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -16,6 +17,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   server!: Server;
   private readonly logger = new Logger(ChatGateway.name);
 
+  constructor(private readonly projectsService: ProjectsService) {}
+  
   @SubscribeMessage('joinProject')
   async handleJoinProject(
     @ConnectedSocket() client: Socket,
