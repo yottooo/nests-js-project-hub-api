@@ -1,6 +1,11 @@
-# Project Hub API
+# Yoke – project hub with real-time chat
 
-NestJS (Express) + TypeORM API backed by PostgreSQL, with real-time project chat over Socket.IO. The database runs in Docker Compose; the app runs with Node on your machine.
+Yoke keeps a team's projects, task board and chat in one place. The repo holds two apps:
+
+- `apps/api` – NestJS (Express) + TypeORM API backed by PostgreSQL, with a Socket.IO chat room for each project.
+- `apps/web` – React + Vite web app with the project list and a drag-and-drop task board. Login and tasks run on mocks until the API has them.
+
+The database runs in Docker Compose; the apps run with Node on your machine.
 
 ## Prerequisites
 
@@ -37,13 +42,15 @@ NestJS (Express) + TypeORM API backed by PostgreSQL, with real-time project chat
    docker compose up -d
    ```
 
-4. Start the API in watch mode
+4. Start the apps in watch mode
 
    ```bash
-   npm run start:dev
+   npm run dev        # API and web together
+   npm run dev:api    # API only
+   npm run dev:web    # web only
    ```
 
-The API is now at http://localhost:3000.
+The API is now at http://localhost:3000 and the web app at http://localhost:5173.
 
 ## Check it works
 
@@ -98,11 +105,15 @@ docker compose down -v     # stop containers and delete the database volume
 
 ## Other scripts
 
+API scripts are run with `-w api` (the workspace name):
+
 ```bash
-npm run build        # compile to dist/
-npm run start:prod   # run compiled build
-npm run lint         # eslint with --fix
-npm run format       # prettier
-npm run test         # unit tests
-npm run test:e2e     # e2e tests
+npm run build -w api        # compile to apps/api/dist/
+npm run start:prod -w api   # run compiled build
+npm run lint -w api         # eslint with --fix
+npm run format -w api       # prettier
+npm run test -w api         # unit tests
+npm run test:e2e -w api     # e2e tests
 ```
+
+`npm run build` without `-w` builds both apps.
