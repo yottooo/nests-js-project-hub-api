@@ -44,6 +44,7 @@ export function Board({ tasks, onMove, onTaskClick, onAddTask }: BoardProps) {
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     setActiveId(null);
     const data = over?.data.current as DropData | undefined;
+    console.log('[dnd-debug] end', JSON.stringify({ active: active.id, over: over?.id ?? null, data: data ?? null }));
     if (!over || !data) return;
 
     const target: DropTarget =
