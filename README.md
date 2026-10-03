@@ -128,3 +128,7 @@ npm run lint -w web         # oxlint
 ```
 
 `npm run build` without `-w` builds both apps.
+
+## License
+
+[MIT](LICENSE) © [yottooo](https://github.com/yottooo). You are free to use, change and share the code, as long as the copyright notice and the license text stay with it.
