@@ -1,0 +1,17 @@
+{
+  "name": "project-hub",
+  "version": "0.0.1",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,green \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "npm run start:dev -w api",
+    "dev:web": "npm run dev -w web",
+    "build": "npm run build --workspaces --if-present"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  }
+}
